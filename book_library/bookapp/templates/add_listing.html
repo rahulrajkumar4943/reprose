@@ -1,0 +1,57 @@
+{% extends "website_template.html" %}
+{% load static %}
+
+{% block title %}
+    add listing
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="center" style="align-items: center;">
+        <h1> Create Listing </h1>
+        <form method="post" action="#" class="signupform">
+            {% csrf_token %}
+
+            <div class="txt_field">
+                <input type="text" id="isbn" name="isbn" required>
+                <span></span>
+                <label>ISBN Number</label>
+            </div>
+            <div class = button>
+                <div class="radio">
+                    <input class="radio__input" type="radio" id="sale" name="saleOrBorrow" value="sale">
+                    <label class="radio__label" for="sale">For Sale</label>
+                </div>
+                <div class="radio">
+                    <input class="radio__input" type="radio" id="borrow" name="saleOrBorrow" value="borrow">
+                    <label class="radio__label" for="borrow">For Lending</label>
+                </div>
+            </div>
+
+            <div class="txt_field" id="priceLabel">
+                <input type="number" id="price" name="price" required>
+                <span></span>
+                <label>Price</label>
+            </div>
+            <input type="submit" value="Add listing" class="addlisting">
+        </form>
+    </div>
+    <script>
+        let lendBtn = document.querySelector('#sale');
+        let saleBtn = document.querySelector('#borrow')
+        let priceBox = document.querySelector('#price');
+        let priceLabel = document.querySelector('#priceLabel');
+
+        lendBtn.onclick = function(){
+            priceBox.classList.add('active');
+            priceLabel.classList.add('active');
+        }
+
+        saleBtn.onclick = function(){
+            priceBox.classList.remove('active');
+            priceLabel.classList.remove('active');
+        }
+    </script>
+{% endblock %}

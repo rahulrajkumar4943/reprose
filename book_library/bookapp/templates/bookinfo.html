@@ -1,0 +1,48 @@
+{% extends "website_template.html" %}
+{% load static %}
+
+{% block title %}
+    Bookinfo {{id}}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'product_page.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<p>The id is {{id}}</p>
+{{id}}
+{{bookdata}}
+<section>
+    <div class="container flex">
+        <div class="left">
+            <div class="main_img">
+                <img src="{{imgurl}}" alt="Image here" class="slide">
+            </div>
+        </div>
+        <div class="right">
+            <h3> {{book_title}} </h3>
+            <h4><small>$</small>25.5</h4>
+            <p>A very long description about the book lord of the rings, by very long I mean very very very very very very very very very long. Now do you understand how long I mean? Yes that long</p>
+            <h5>Quantity</h5>
+            <div class="add flex1">
+                <span>-</span>
+                <label>1</label>
+                <span>+</span>
+            </div>
+            <button>Add to Cart</button>
+        </div>
+    </div>
+</section>
+<script>
+    function img(anything){
+        document.querySelector('.slide').src = anything
+    }
+
+    function change(change){
+        const line = document.querySelector('.home');
+        line.style.background = change;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "website_template.html" %}
+{% load static %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+    <section>
+
+        <div class="box1 box">
+          <div class="content">
+            <div class="image">
+              <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile Image">
+            </div>
+            <div class="level">
+              <p>PRO</p>
+            </div>
+            <div class="text">
+              <p class="name">User Name</p>
+              <p class="job_title">Title</p>
+              <p class="job_discription">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam atque, ipsam a amet laboriosam eligendi.</p>
+            </div>
+            <div class="icons">
+              <button>
+                <ion-icon name="logo-dribbble"></ion-icon>
+              </button>
+              <button>
+                <ion-icon name="logo-instagram"></ion-icon>
+              </button>
+              <button>
+                <ion-icon name="logo-twitter"></ion-icon>
+              </button>
+              <button>
+                <ion-icon name="logo-linkedin"></ion-icon>
+              </button>
+              <button>
+                <ion-icon name="logo-facebook"></ion-icon>
+              </button>
+              <button>
+                <ion-icon name="logo-behance"></ion-icon>
+              </button>
+            </div>
+            <div class="button">
+              <div>
+                <button class="message" type="button">Message</button>
+              </div>
+              <div>
+                <button class="connect" type="button">Connect</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        
+      
+      </section>
+      
+      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        
+</body>
+{% endblock %}
+

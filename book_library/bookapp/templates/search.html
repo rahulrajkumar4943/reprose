@@ -1,0 +1,54 @@
+{% extends "website_template.html" %}
+{% load static %}
+
+{% block title %}
+    Browse
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'listings.css' %}">
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+    <p {{context.madequery}}> {{context.numberOfResults}} result{{context.s}} for "{{context.query}}"</p>
+    <br>
+    <button {{context.isnothidden}} class="add-listing" onclick="location.href='/listing/add'">
+        &#43 Create Listing
+    </button>
+    <br>
+
+    <!-- Sample book db - remove later -->
+
+    <h1 {{context.noResults}}>No matches found for "{{context.query}}"</h1>
+    <!-- grid of book listings -->
+    <div class = 'grid'>
+        {% for book in context.listings %}
+            
+                <div id="box" class="grid-item" onclick="location.href='/bookinfo/'+'{{book.id}}'">
+                    <div class="card">
+                        <img class="card-img" src="{{book.imgurl}}" alt="book {{book.id}}">
+                        <div class="card-content">
+                            <h1 class="card-header"> {{book.book_title}} </h1>
+                            <p class="card-text">
+                                {{book.isbn}}
+                                <br>
+                                {{book.genre}}
+                            </p>
+                            <button id="btn" class="card-btn" onclick="location.href='/cart/'; event.preventDefault(); event.stopPropagation();">
+                                Add to Cart <span>&rarr;</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+            {% endfor %}
+    </div>
+
+    
+
+
+
+
+
+{% endblock %}

@@ -11,16 +11,24 @@
 
 {% block content %}
 {% csrf_token %}
-    <p {{context.madequery}}> {{context.numberOfResults}} result{{context.s}} for "{{context.query}}"</p>
-    <br>
-    <button {{context.isnothidden}} class="add-listing" onclick="location.href='/listing/add'">
-        &#43 Create Listing
-    </button>
-    <br>
+    <div class="sub-header">
+        <div class="left">
+            <button {{context.isnothidden}} class="add-listing" onclick="location.href='/listing/add'">
+                &#43 Create Listing
+            </button>
+            <br>
+            <p {{context.madequery}}> {{context.numberOfResults}} result{{context.s}} for "{{context.query}}"</p>
+            <br>
+            <!-- Sample book db - remove later -->
 
-    <!-- Sample book db - remove later -->
-
-    <h1 {{context.noResults}}>No matches found for "{{context.query}}"</h1>
+            <h1 {{context.noResults}}>No matches found for "{{context.query}}"</h1>
+        </div>
+        <div class="right">
+            <div class="filter-btn">
+                <ion-icon name="filter-outline" class="filter-icon"></ion-icon>&nbsp&nbspFilter
+            </div>
+        </div>
+    </div>
     <!-- grid of book listings -->
     <div class = 'grid'>
         {% for book in context.listings %}
@@ -31,24 +39,135 @@
                         <div class="card-content">
                             <h1 class="card-header"> {{book.book_title}} </h1>
                             <p class="card-text">
-                                {{book.isbn}}
+                                {{book.saleOrBorrow}}
                                 <br>
-                                {{book.genre}}
+                                S${{book.price}}
                             </p>
-                            <button id="btn" class="card-btn" onclick="location.href='/cart/'; event.preventDefault(); event.stopPropagation();">
-                                Add to Cart <span>&rarr;</span>
-                            </button>
+                            <form method="post" action="/cart/">
+                                {% csrf_token %}
+                                <button type="submit" id="btn" class="card-btn" name="addToCart_button" value="{{book.id}}"; event.preventDefault(); event.stopPropagation();>
+                                    Add to Cart <span>&rarr;</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
                 
             {% endfor %}
     </div>
+    <form method="post" action="#">
+        {% csrf_token %}
+        <div class="filter-box">
+            <div class="close-filter-btn">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+            <div class="filter-item">
+                <label class="heading">Price</label>
+                    <div class="price-range">
+                        <div class="txt_field">
+                            <input type="number" id="minprice" name="minprice">
+                            <span></span>
+                            <label>Minimum price</label>
+                        </div>
+                        <div class="txt_field">
+                            <input type="number" id="maxprice" name="maxprice">
+                            <span></span>
+                            <label>Maximum price</label>
+                        </div>
+                    </div>
+            </div>
+            <div class="filter-item">
+                <label class="heading">Condition</label>
+                <div class="radio">
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Brand_New" name="condition" value="Brand_New">
+                        <label class="radio-label" for="Brand_New">Brand New</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Like_New" name="condition" value="Like_New">
+                        <label class="radio-label" for="Like_New">Like New</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Slight_Wear" name="condition" value="Slight_Wear">
+                        <label class="radio-label" for="Slight_Wear">Slight Wear</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Worn_Out" name="condition" value="Worn_Out">
+                        <label class="radio-label" for="Worn_Out">Worn Out</label><br>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-item">
+                <label class="heading">Genre</label>
+                <div class="radio">
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Fiction" name="genre" value="Fiction">
+                        <label class="radio-label" for="Fiction">Fiction</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Educational" name="genre" value="Educational">
+                        <label class="radio-label" for="Educational">Educational</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Adventure" name="genre" value="Adventure">
+                        <label class="radio-label" for="Adventure">Adventure</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Non-Fiction" name="genre" value="Non-Fiction">
+                        <label class="radio-label" for="Non-Fiction">Non-Fiction</label><br>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-item">
+                <label class="heading">Age group</label>
+                <div class="radio">
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="13" name="age_group" value="13">
+                        <label class="radio-label" for="13">13 years</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="18" name="age_group" value="18">
+                        <label class="radio-label" for="18">18 years</label><br>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-item">
+                <label class="heading">Sale or Borrowing</label>
+                <div class="radio">
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Sale" name="saleLend" value="Sale">
+                        <label class="radio-label" for="Sale">For Sale</label><br>
+                    </div>
+                    <div class="radio-option">
+                        <input class="radio-input" type="radio" id="Borrowing" name="saleLend" value="Borrowing">
+                        <label class="radio-label" for="Borrowing">For Borrowing</label><br>
+                    </div>
+                </div>
+            </div>
+            <button class="search-with-filter-btn" type="submit" name="filter_search" value="filter_search">Search</button>
+        </div>
+    </form>
+    <script>
+        let filterBtn = document.querySelector('.filter-btn');
+        let closefilterBtn = document.querySelector('.close-filter-btn');
+        let fliterBox = document.querySelector('.filter-box');
+        let webpage = document.querySelector('body');
 
-    
+        filterBtn.onmousedown = function(){
+            fliterBox.classList.add('active');
+            webpage.classList.add('inactive');
+            document.body.style.overflow = 'hidden';
+        }
+
+        closefilterBtn.onclick = function(){
+            fliterBox.classList.remove('active');
+            webpage.classList.remove('inactive');
+            document.body.style.overflow = 'scroll';
+            
+        }
 
 
-
-
-
+    </script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 {% endblock %}

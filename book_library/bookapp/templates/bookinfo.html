@@ -2,47 +2,56 @@
 {% load static %}
 
 {% block title %}
-    Bookinfo {{id}}
+    Reprose - {{bookdata.book_title}}
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'product_page.css' %}">
+    <link rel="stylesheet" href="{% static 'product_page.css' %}">    
+    <style>
+        .backtoresults:hover {
+            text-decoration: underline;
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
-<p>The id is {{id}}</p>
-{{id}}
-{{bookdata}}
+<!-- <p>The id is {{id}}</p> -->
+
 <section>
-    <div class="container flex">
+    <a href="javascript:history.go(-1)" class="backtoresults"> &lt Back to Results</a>
+    <br>
+    <br>
+
+
+    <div class="flex" style="justify-content: center;">
         <div class="left">
             <div class="main_img">
-                <img src="{{imgurl}}" alt="Image here" class="slide">
+                <img src="{{bookdata.imgurl}}" alt="Image here" class="slide">
             </div>
         </div>
         <div class="right">
-            <h3> {{book_title}} </h3>
-            <h4><small>$</small>25.5</h4>
-            <p>A very long description about the book lord of the rings, by very long I mean very very very very very very very very very long. Now do you understand how long I mean? Yes that long</p>
-            <h5>Quantity</h5>
-            <div class="add flex1">
-                <span>-</span>
-                <label>1</label>
-                <span>+</span>
-            </div>
-            <button>Add to Cart</button>
-        </div>
-    </div>
-</section>
-<script>
-    function img(anything){
-        document.querySelector('.slide').src = anything
-    }
 
-    function change(change){
-        const line = document.querySelector('.home');
-        line.style.background = change;
-    }
+            <h3> {{bookdata.book_title}} </h3>
+            <br>
+            <h4><small>S$</small>{{bookdata.price}}</h4>
+            <p>{{bookdata.description}}</p>
+            
+            <hr>
+            <br>
+
+            <div class="button">
+                <button class="addtocard" onclick="location.href='/cart/'">Add to Cart</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+</section>
+
+<script>
 </script>
 {% endblock %}

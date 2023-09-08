@@ -1,12 +1,16 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: montserrat;
-    height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
     background: #9ecec3;
+    /* overflow-y: scroll;
+    overflow-x: hidden; */
 }
+
+p {
+    text-align: center;
+    color: #adadad;
+    margin-top: 0px;
+ }
 
 .center {
     position: absolute;
@@ -14,7 +18,7 @@ body {
     margin-top: 20px;
     margin-bottom: 20px;
     transform: translate(-50%);
-    width: 400px;
+    width: 60%;
     background: white;
     border-radius: 10px;
     opacity: 1;
@@ -69,18 +73,35 @@ form .txt_field {
    left: 0;
    width: 0%;
    height: 2px;
-   background: #9ecec3;
+   background: #aabcb7;
    transition: 0.5s;
 }
 
 .txt_field input:focus ~ label, .txt_field input:valid ~ label {
    top: -5px;
-   color: #9ecec3;
+   color: #aabcb7;
 }
 
 .txt_field input:focus ~ span::before, .txt_field input:valid ~ span::before {
    width: 100%;
 }
+
+form .query_field {
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+ }
+
+.query_field textarea {
+    width: 100%;
+    padding: 0 5px;
+    height: 100%;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+    resize: vertical;
+ }
 
 .pass {
    margin: -5px 0 20px 5px;
@@ -191,22 +212,9 @@ label:hover {
    justify-content: center;
 }
 
-.center2 {
-   position: absolute;
-   left: 50%;
-   margin-top: 20px;
-   margin-bottom: 20px;
-   transform: translate(-50%);
-   width: 400px;
-   background: white;
-   border-radius: 10px;
-   opacity: 1;
-   visibility: visible;
-   transition: 0.2s;
-   scale: 1;
-   padding: 20px;
-}
-
-#instructions {
-   margin-bottom: 20px;
+.center.inactive {
+   opacity: 0;
+   visibility: hidden;
+   scale: 0;
+   transition: 0.0s;
 }

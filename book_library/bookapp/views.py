@@ -10,6 +10,8 @@ import string
 import time
 import calendar
 from datetime import datetime
+import json
+import ast
 
 # import custom functions
 
@@ -17,21 +19,33 @@ from datetime import datetime
 
 
 def homepage(request):
+    csrf_token = get_token(request)
+    listings = Listings.objects.filter(id=-1).values()
+    number_of_best_selling = 7  # number of listings shown on homepage
+    # show only the first ____ number of listings
+    for i in range(number_of_best_selling):
+        checkid = str(i+1)
+        listings = listings | Listings.objects.filter(id=checkid).values()
+        # print(len(listings))
     if 'user_login' in request.session:
         context = {
+            "csrf_token": csrf_token,
             "home_class": "active",
             "about_class": "inactive",
             "contact_class": "inactive",
             "ishidden": "hidden",
-            "isnothidden": ""
+            "isnothidden": "",
+            "listings": listings,
         }
     else:
         context = {
+            "csrf_token": csrf_token,
             "home_class": "active",
             "about_class": "inactive",
             "contact_class": "inactive",
             "ishidden": "",
-            "isnothidden": "hidden"
+            "isnothidden": "hidden",
+            "listings": listings,
         }
 
     renderdata = {}
@@ -176,8 +190,11 @@ def login(request):
 
 
 def about(request):
+    csrf_token = get_token(request)
+
     if 'user_login' in request.session:
         context = {
+            "csrf_token": csrf_token,
             "ishidden": "hidden",
             "isnothidden": "",
             "home_class": "inactive",
@@ -186,6 +203,7 @@ def about(request):
         }
     else:
         context = {
+            "csrf_token": csrf_token,
             "ishidden": "",
             "isnothidden": "hidden",
             "home_class": "inactive",
@@ -196,36 +214,123 @@ def about(request):
     renderdata = {}
     renderdata['context'] = context
     template = loader.get_template('about.html')
-    return HttpResponse(template.render(renderdata))
+    return HttpResponse(template.render(renderdata, request))
 
 
 def contact(request):
-    if 'user_login' in request.session:
-        context = {
-            "ishidden": "hidden",
-            "isnothidden": "",
-            "home_class": "inactive",
-            "about_class": "inactive",
-            "contact_class": "active",
-        }
+    csrf_token = get_token(request)
+
+    if request.method == "POST":
+        if 'user_login' in request.session:
+            email_address = users.objects.get(
+                id=request.session['user_login']).email_id
+
+            context = {
+                "csrf_token": csrf_token,
+                "ishidden": "hidden",
+                "isnothidden": "",
+                "home_class": "inactive",
+                "about_class": "inactive",
+                "contact_class": "active",
+                "logged_in": True,
+            }
+        else:
+            email_address = request.POST["email"]
+
+            context = {
+                "csrf_token": csrf_token,
+                "ishidden": "",
+                "isnothidden": "hidden",
+                "home_class": "inactive",
+                "about_class": "inactive",
+                "contact_class": "active",
+                "logged_in": False,
+            }
+
+        t = time.localtime()
+
+        send_to = 'praneeth.suresh@giis.edu.sg'
+
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+
+            smtp.login('ispsinstock@gmail.com', 'acsfrsxmxbtcrmbj')
+
+            message = f"""Dear manager,
+            User with the email id {email_address} has the following query for you:
+
+            {request.POST["query"]}
+
+            The query was generated at {time.strftime("%H:%M:%S", t)}
+
+            With Regards,
+            Computer system
+            """
+
+            subject = 'Query for reprose'
+
+            msg = f'Subject: {subject}\n\n{message}'
+
+            smtp.sendmail('ispsinstock@gmail.com',
+                          send_to, msg)
+
+            print("Query send to manager.")
+
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+
+            smtp.login('reprose.xx@gmail.com', 'Garlicbread123')
+
+            message = f"""Dear manager,
+            User with the email id {email_address} has the following query for you:
+
+            {request.POST["query"]}
+
+            The query was generated at {time.strftime("%H:%M:%S", t)}
+
+            With Regards,
+            Computer system
+            """
+
+            subject = 'Query for reprose'
+
+            msg = f'Subject: {subject}\n\n{message}'
+
+            smtp.sendmail('reprose.xx@gmail.com',
+                          send_to, msg)
+
+            print("Query send to manager.")
+
     else:
-        context = {
-            "ishidden": "",
-            "isnothidden": "hidden",
-            "home_class": "inactive",
-            "about_class": "inactive",
-            "contact_class": "active",
-        }
+        if 'user_login' in request.session:
+            context = {
+                "csrf_token": csrf_token,
+                "ishidden": "hidden",
+                "isnothidden": "",
+                "home_class": "inactive",
+                "about_class": "inactive",
+                "contact_class": "active",
+                "logged_in": True,
+            }
+        else:
+            context = {
+                "csrf_token": csrf_token,
+                "ishidden": "",
+                "isnothidden": "hidden",
+                "home_class": "inactive",
+                "about_class": "inactive",
+                "contact_class": "active",
+                "logged_in": False,
+            }
 
     renderdata = {}
     renderdata['context'] = context
     template = loader.get_template('contact.html')
-    return HttpResponse(template.render(renderdata))
-
-
-def website_template(request):
-    template = loader.get_template('website_template.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render(renderdata, request))
 
 
 def test(request):
@@ -235,12 +340,18 @@ def test(request):
 
 def profile(request):
     if 'user_login' in request.session:
+
+        UserBio = users.objects.get(
+            id=request.session['user_login'])
+
         context = {
             "ishidden": "hidden",
             "isnothidden": "",
             "home_class": "inactive",
             "about_class": "inactive",
             "contact_class": "inactive",
+            "name": UserBio.firstname + " " + UserBio.lastname,
+            "email": UserBio.email_id,
         }
         renderdata = {}
         renderdata['context'] = context
@@ -254,8 +365,43 @@ def browse_listings(request):
     csrf_token = get_token(request)
     listings = Listings.objects.all().values()
     if request.method == "POST":
-        query = request.POST["query"]
-        listings = Listings.objects.filter(book_title__icontains=query)
+        if request.POST.get('filter_search'):
+            print("filter")
+            query = ""
+            if request.POST.get('minprice'):
+                min_price = request.POST.get('minprice')
+            else:
+                min_price = 0
+
+            if request.POST.get('maxprice'):
+                max_price = request.POST.get('maxprice')
+            else:
+                max_price = 1000
+
+            if request.POST.get('condition'):
+                condition = request.POST.get('condition')
+            else:
+                condition = "w"
+
+            if request.POST.get('genre'):
+                genre = request.POST.get('genre')
+            else:
+                genre = ""
+            if request.POST.get('age_group'):
+                age_group = request.POST.get('age_group')
+            else:
+                age_group = ""
+            if request.POST.get('saleLend'):
+                saleLend = request.POST.get('saleLend')
+            else:
+                saleLend = ""
+            listings = Listings.objects.filter(
+                price__range=(min_price, max_price), condition__icontains=condition, saleOrBorrow=saleLend)
+        else:
+            print("no-filter")
+            query = request.POST.get("query")
+            listings = Listings.objects.filter(
+                book_title__icontains=query) | Listings.objects.filter(description__icontains=query)
         numberOfResults = listings.count()
         if listings:
             noResults = "hidden"
@@ -363,15 +509,11 @@ def add_listing(request):
                 age = 13
             imgurl = bookdata[5]
             description = bookdata[1]
-            if request.POST["saleOrBorrow"] == "sale":
-                isForSale = True
-                isForBorrowing = not isForSale
-            else:
-                isForBorrowing = True
-                isForSale = not isForBorrowing
+            saleOrBorrow = request.POST["listingType"]
             price = request.POST["price"]
+            condition = request.POST['condition']
             data = Listings(userid=request.session['user_login'], book_title=book_title, isbn=isbn,
-                            genre=genre, age_group=age, for_sale=isForSale, for_borrowing=not isForSale, price=price, imgurl=imgurl, description=description)
+                            genre=genre, age_group=age, saleOrBorrow=saleOrBorrow, price=price, imgurl=imgurl, description=description, condition=condition, times_viewed=0, borrowed_date=0)
             data.save()
             return redirect('search')
         else:
@@ -392,22 +534,29 @@ def forgot(request):
     if 'user_login' in request.session:
         return redirect('homepage')
     else:
-        if 'user_requested_password' in request.session:
-            print(request.session['user_requested_password'])
-            del request.session['user_requested_password']
         # Create csrf token
         csrf_token = get_token(request)
 
         # Once form is submitted
         if request.method == "POST":
+            if 'user_requested_password' in request.session:
+                del request.session['user_requested_password']
             user_email_address = request.POST["email"]
             if users.objects.filter(email_id=user_email_address):
                 context = {
                     "csrf_token": csrf_token,
                     "ishidden": "",
                     "isnothidden": "hidden",
-                    "error_message": ""
+                    "error_message": "",
+                    "hide": "hidden",
+                    "unhide": "",
                 }
+                renderdata = {}
+                renderdata['context'] = context
+                # generate random url extension
+                url_extension = ''.join(random.choices(
+                    string.ascii_lowercase + string.ascii_uppercase + string.digits, k=16))
+
                 # Needs to send email with new password
                 print("email address: ", user_email_address)
 
@@ -420,21 +569,26 @@ def forgot(request):
                     smtp.login('ispsinstock@gmail.com', 'acsfrsxmxbtcrmbj')
 
                     subject = 'Reprose Password Reset'
-                    body = f'To reset your password, click on the following link: http://localhost:8000/resetPassword'
+                    body = f'To reset your password, click on the following link: http://localhost:8000/resetPassword/{url_extension}'
 
                     msg = f'Subject: {subject}\n\n{body}'
 
                     smtp.sendmail('ispsinstock@gmail.com',
                                   user_email_address, msg)
-                request.session['user_requested_password'] = users.objects.get(
-                    email_id=user_email_address).id
-                return redirect('homepage')
+                request.session['user_requested_password'] = [users.objects.get(
+                    email_id=user_email_address).id]
+                request.session['user_requested_password'].insert(
+                    1, url_extension)
+                template = loader.get_template('forgotPassword.html')
+                return HttpResponse(template.render(renderdata, request))
             else:
                 context = {
                     "csrf_token": csrf_token,
                     "ishidden": "",
                     "isnothidden": "hidden",
-                    "error_message": "email id not found"
+                    "error_message": "email id not found",
+                    "hide": "",
+                    "unhide": "hidden",
                 }
                 renderdata = {}
                 renderdata['context'] = context
@@ -445,7 +599,9 @@ def forgot(request):
                 "csrf_token": csrf_token,
                 "ishidden": "",
                 "isnothidden": "hidden",
-                "error_message": ""
+                "error_message": "",
+                "hide": "",
+                "unhide": "hidden",
             }
 
             renderdata = {}
@@ -455,15 +611,48 @@ def forgot(request):
             return HttpResponse(template.render(renderdata, request))
 
 
-def resetpw(request):
+def resetpw(request, extension):
     if 'user_login' in request.session:
         return redirect('homepage')
-    else:
-        if 'user_requested_password' in request.session:
-            print(request.session['user_requested_password'])
-            csrf_token = get_token(request)
-            if request.method == "POST":
-                if request.POST['password1'] == request.POST['password2']:
+    elif 'user_requested_password' in request.session:
+        if extension == request.session['user_requested_password'][1]:
+            print(extension)
+            if 'user_requested_password' in request.session:
+                print(request.session['user_requested_password'])
+                csrf_token = get_token(request)
+                if request.method == "POST":
+                    if request.POST['password1'] == request.POST['password2']:
+                        context = {
+                            "csrf_token": csrf_token,
+                            "ishidden": "",
+                            "isnothidden": "hidden",
+                            "error_message": ""
+                        }
+                        renderdata = {}
+                        renderdata['context'] = context
+                        newpassword = request.POST['password1']
+                        x = users.objects.get(
+                            id=request.session['user_requested_password'][0])
+                        x.password = newpassword
+                        x.save()
+                        request.session['user_login'] = str(
+                            users.objects.get(id=request.session['user_requested_password'][0]))
+                        request.session.modify = True
+                        del request.session['user_requested_password']
+                        print(request.session['user_login'])
+                        return redirect('homepage')
+                    else:
+                        context = {
+                            "csrf_token": csrf_token,
+                            "ishidden": "",
+                            "isnothidden": "hidden",
+                            "error_message": "passwords do not match"
+                        }
+                        renderdata = {}
+                        renderdata['context'] = context
+                        template = loader.get_template('resetPassword.html')
+                        return HttpResponse(template.render(renderdata, request))
+                else:
                     context = {
                         "csrf_token": csrf_token,
                         "ishidden": "",
@@ -472,48 +661,177 @@ def resetpw(request):
                     }
                     renderdata = {}
                     renderdata['context'] = context
-                    newpassword = request.POST['password1']
-                    x = users.objects.get(
-                        id=request.session['user_requested_password'])
-                    x.password = newpassword
-                    x.save()
-                    request.session['user_login'] = str(
-                        users.objects.get(id=request.session['user_requested_password']))
-                    request.session.modify = True
-                    del request.session['user_requested_password']
-                    print(request.session['user_login'])
-                    return redirect('homepage')
-
+                    template = loader.get_template('resetPassword.html')
+                    return HttpResponse(template.render(renderdata, request))
             else:
-                context = {
-                    "csrf_token": csrf_token,
-                    "ishidden": "",
-                    "isnothidden": "hidden",
-                    "error_message": ""
-                }
-                renderdata = {}
-                renderdata['context'] = context
-                template = loader.get_template('resetPassword.html')
-                return HttpResponse(template.render(renderdata, request))
+                return redirect('forgotPassword')
         else:
             return redirect('forgotPassword')
+    else:
+        return redirect('forgotPassword')
 
 
 def bookinfo(request, id):
+    if 'may_add_to_cart' in request.session:
+        del request.session['may_add_to_cart']
     bookdata = Listings.objects.filter(id=id).values()
     # print(type(bookdata))
     context = {
         'id': id,
-        'bookdata': bookdata,
-        'imgurl': Listings.objects.get(id=id).imgurl,
-        'book_title': Listings.objects.get(id=id).book_title
+        'bookdata': bookdata.values()[0],
     }
+    request.session['may_add_to_cart'] = id
     template = loader.get_template('bookinfo.html')
     return HttpResponse(template.render(context, request))
     return HttpResponse('<p>The id is {}</p>'.format(id))
 
 
 def cart(request):
-    context = {}
-    template = loader.get_template('cart.html')
-    return HttpResponse(template.render(context, request))
+    if 'user_login' in request.session:
+        if 'may_add_to_cart' in request.session:
+            isAlrInCart = False
+            userdata = users.objects.get(
+                id=request.session['user_login']).cart
+            print("users cart: ", userdata)
+            if userdata == {}:
+                current_cart = userdata
+            else:
+                current_cart = json.loads(userdata)
+            for item in current_cart:
+                if current_cart[item] == request.session['may_add_to_cart']:
+                    isAlrInCart = True
+            if not isAlrInCart:
+                length = len(current_cart)+1
+                all_keys = list(current_cart.keys())
+                clashing = False
+                for x in all_keys:
+                    if length == int(x):
+                        clashing = True
+                count = 1
+                if clashing:
+                    for x in all_keys:
+                        if not count == int(x):
+                            length = count
+                            break
+                        else:
+                            count = count + 1
+                current_cart[length] = request.session['may_add_to_cart']
+                data = users.objects.get(id=request.session['user_login'])
+                data.cart = json.dumps(current_cart)
+                data.save()
+                print("users updated cart: ", data.cart)
+                context = {
+                    "ishidden": "hidden",
+                    "isnothidden": "",
+                    "error_message": "",
+                }
+            else:
+                context = {
+                    "ishidden": "hidden",
+                    "isnothidden": "",
+                    "error_message": "Item has already been added to cart",
+                }
+            del request.session['may_add_to_cart']
+        elif request.method == "POST":
+            if request.POST.get('addToCart_button'):
+                cart_item = request.POST['addToCart_button']
+                isAlrInCart = False
+                userdata = users.objects.get(
+                    id=request.session['user_login']).cart
+                print("users cart: ", userdata)
+                if userdata == {}:
+                    current_cart = userdata
+                else:
+                    current_cart = json.loads(userdata)
+                for item in current_cart:
+                    if current_cart[item] == cart_item:
+                        isAlrInCart = True
+                if not isAlrInCart:
+                    length = len(current_cart)+1
+                    all_keys = list(current_cart.keys())
+                    clashing = False
+                    for x in all_keys:
+                        if length == int(x):
+                            clashing = True
+                            count = 1
+                    if clashing:
+                        for x in all_keys:
+                            if not count == int(x):
+                                length = count
+                                break
+                            else:
+                                count = count + 1
+                    current_cart[length] = cart_item
+                    data = users.objects.get(id=request.session['user_login'])
+                    data.cart = json.dumps(current_cart)
+                    data.save()
+                    print("users updated cart:", data)
+                    context = {
+                        "ishidden": "hidden",
+                        "isnothidden": "",
+                        "error_message": "",
+                    }
+                else:
+                    context = {
+                        "ishidden": "hidden",
+                        "isnothidden": "",
+                        "error_message": "Item has already been added to cart",
+                    }
+            else:
+                delete_item = request.POST['delete_button']
+                userdata = users.objects.get(
+                    id=request.session['user_login']).cart
+                current_cart = json.loads(userdata)
+                keys_with_value = [
+                    key for key, value in current_cart.items() if value == delete_item]
+                print("item to be deleted:", keys_with_value)
+                context = {
+                    "ishidden": "hidden",
+                    "isnothidden": "",
+                    "error_message": "",
+                }
+                print("dleteing bookid:", current_cart[keys_with_value[0]])
+                del current_cart[keys_with_value[0]]
+                data = users.objects.get(id=request.session['user_login'])
+                data.cart = json.dumps(current_cart)
+                data.save()
+                print(data)
+        else:
+            context = {
+                "ishidden": "hidden",
+                "isnothidden": "",
+                "error_message": "",
+            }
+        if users.objects.get(id=request.session['user_login']).cart == {}:
+            cart = users.objects.get(id=request.session['user_login']).cart
+        else:
+            cart = json.loads(users.objects.get(
+                id=request.session['user_login']).cart)
+        book_ids = list(cart.values())
+        print("books in user's cart: ", book_ids)
+        listings = Listings.objects.filter(id__in=book_ids)
+        renderdata = {
+            "context": context,
+            "listings": listings,
+            "userid": request.session['user_login']
+        }
+        renderdata['context'] = context
+        template = loader.get_template('cart.html')
+        return HttpResponse(template.render(renderdata, request))
+    else:
+        return redirect('login')
+
+
+def checkout(request, userid):
+    if 'user_login' in request.session:
+        if request.session['user_login'] == userid:
+            userdata = users.objects.get(id=userid)
+            context = {
+                "userdata": userdata
+            }
+            template = loader.get_template("checkout.html")
+            return HttpResponse(template.render())
+        else:
+            return redirect('cart')
+    else:
+        return redirect('login')

@@ -15,12 +15,13 @@ header {
 }
 
 body {
-    background-color: #eeeeee;
+    /* background-color: #9ecec3; */
     font-family: "Poppins", sans-serif;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding-right: 62px;
+    background: #ffffff;
 }
 
 .grid {
@@ -117,14 +118,204 @@ p {
 
 .add-listing {
     padding: 10px;
-    border-radius: 50px;
+    border-radius: 10px;
     margin-bottom: 30px;
     border-width: 2px;
     cursor: pointer;
-    background-color: white;
-    border: none;
+    background-color: #9ecec3;
+    border: 1.5px solid #3c3c3c;
+    
 }
 
 .add-listing:hover {
+    border: 1.5px solid #3c3c3c;
+    background: #3c3c3c;
+    color: #9ecec3;
+}
+
+.sub-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.left {
+    width: 50%;
+}
+
+.right {
+    display: flex;
+    width: 50%;
+    justify-content: flex-end;
+    margin-right: 3%;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    padding: 2px 15px 2px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    border-width: 2px;
+    cursor: pointer;
+    background-color: #9ecec3;
+    border: 1.5px solid #3c3c3c;
+    font-size: 15px;
+    height: 7vh;
+}
+
+.filter-icon {
+    transform: translateY(0px);
+}
+
+.filter-btn:hover {
+    border: 1.5px solid #3c3c3c;
+    background: #3c3c3c;
+    color: #9ecec3;
+}
+
+.filter-box {
+    padding: 3%;
+    position: absolute;
+    top: 22%;
+    left: 15%;
+    display: flex;
+    width: 70%;
+    height: 70%;
+    background-color: #9ecec3;
+    border-radius: 30px;
+    flex-direction: column;
+    overflow-y: scroll;
+    border: 2px solid #3c3c3c;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.3);
+    visibility: hidden;
+}
+
+.filter-box.active {
+    visibility: visible;
+}
+
+.filter-item {
+    margin: 10px;
+    padding-top: 10px;
+    font-size: 20px;
+}
+
+.filter-item:not(:nth-of-type(2)) {
+    border-top: 1px solid black;
+}
+
+.filter-item:nth-of-type(6) {
+    border-bottom: 1px solid black;
+}
+
+.radio {
+    display: flex;
+    margin: 5% 0 5%;
+}
+
+.radio-option {
+    margin-right: 5%;
+}
+
+.radio-option input {
+    display: none;
+}
+
+.radio-option label {
+    background: #9ecec3;
+    border: 1px solid #3c3c3c;
+    border-radius: 40px;
+    padding: 5px 20px 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.radio-input:checked + .radio-label{
+    background-color: #3c3c3c;
+    color: #9ecec3;
+}
+
+.price-range {
+    display: flex;
+}
+
+.txt_field {
+    position: relative;
+    border-bottom: 1px solid black;
+    margin: 30px 0;
+    margin-right: 10%;
+ }
+ 
+ .txt_field input {
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+ }
+ 
+ .txt_field label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: black;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    transition: .5s;
+ }
+ 
+ .txt_field span::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    transition: 0.5s;
+ }
+ 
+ .txt_field input:focus ~ label, .txt_field input:valid ~ label {
+    top: -5px;
+ }
+ 
+ .txt_field input:focus ~ span::before, .txt_field input:valid ~ span::before {
+    width: 100%;
+ }
+
+.search-with-filter-btn {
+    width: 25%;
+    align-self: center;
+    background: #9ecec3;
+    border: 1px solid #3c3c3c;
+    border-radius: 30px;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 4%;
+    color: #3c3c3c;
+    cursor: pointer;
+}
+
+.search-with-filter-btn:hover {
+    background-color: #3c3c3c;
+    color: #9ecec3;
+}
+
+.close-filter-btn {
+    align-self: flex-end;
+    font-size: 25px;
+    margin-right: 1%;
+    cursor: pointer;
+}
+
+.close-filter-btn:hover {
     transform: scale(1.1);
+}
+
+.grid.inactive
+
+body.inactive {
+    overflow: hidden;
 }

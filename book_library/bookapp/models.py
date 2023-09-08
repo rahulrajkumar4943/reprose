@@ -9,6 +9,7 @@ class users(models.Model):
     lastname = models.CharField(max_length=100)
     email_id = models.EmailField(max_length=100)
     password = models.CharField(max_length=100)
+    cart = models.JSONField(default={})
 
 
 class Listings(models.Model):
@@ -19,10 +20,12 @@ class Listings(models.Model):
     isbn = models.IntegerField()
     genre = models.CharField(max_length=100)
     age_group = models.CharField(max_length=20)
-    for_sale = models.BooleanField()
-    for_borrowing = models.BooleanField()
+    saleOrBorrow = models.CharField(max_length=20)
     price = models.IntegerField()
     imgurl = models.CharField(max_length=255)
     description = models.CharField(max_length=700)
+    condition = models.CharField(max_length=50)
+    times_viewed = models.IntegerField()
+    borrowed_date = models.BigIntegerField()
 
 # class Genre(models.Model):

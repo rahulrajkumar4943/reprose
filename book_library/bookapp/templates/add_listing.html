@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block title %}
-    add listing
+    Add Listing
 {% endblock %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'login.css' %}">
+    <link rel="stylesheet" href="{% static 'addListingForm.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -19,39 +19,38 @@
                 <span></span>
                 <label>ISBN Number</label>
             </div>
-            <div class = button>
-                <div class="radio">
-                    <input class="radio__input" type="radio" id="sale" name="saleOrBorrow" value="sale">
-                    <label class="radio__label" for="sale">For Sale</label>
-                </div>
-                <div class="radio">
-                    <input class="radio__input" type="radio" id="borrow" name="saleOrBorrow" value="borrow">
-                    <label class="radio__label" for="borrow">For Lending</label>
-                </div>
-            </div>
+ 
+            <select class="dropdown" id="listingType" name="listingType">
+                <option value="">Listing type</option>
+                <option id="sale" value="Sale">For Sale</option>
+                <option id="borrow" value="Borrowing">For Lending</option>
+            </select>
 
             <div class="txt_field" id="priceLabel">
-                <input type="number" id="price" name="price" required>
+                <input type="number" name="price" required>
                 <span></span>
                 <label>Price</label>
             </div>
+            <select class="dropdown" id="condition" name="condition">
+                <option value="">Condition</option>
+                <option value="Brand_New">Brand New</option>
+                <option value="Like_new">Used - Like New</option>
+                <option value="Slight_Wear">Used - Slight Wear</option>
+                <option value="Worn_Out">Used - Worn Out</option>
+            </select>
+                
             <input type="submit" value="Add listing" class="addlisting">
         </form>
     </div>
     <script>
-        let lendBtn = document.querySelector('#sale');
-        let saleBtn = document.querySelector('#borrow')
+        let saleBtn = document.querySelector('#listingType')
         let priceBox = document.querySelector('#price');
         let priceLabel = document.querySelector('#priceLabel');
 
-        lendBtn.onclick = function(){
-            priceBox.classList.add('active');
-            priceLabel.classList.add('active');
+        if (saleBtn.value == "Sale"){
+            //priceLabel.removeAttribute("hidden");
+            priceLabel.setAttribute("hidden");
         }
-
-        saleBtn.onclick = function(){
-            priceBox.classList.remove('active');
-            priceLabel.classList.remove('active');
-        }
+        
     </script>
 {% endblock %}

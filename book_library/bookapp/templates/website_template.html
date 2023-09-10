@@ -22,15 +22,18 @@
                     <li {{context.ishidden }}><a href="/login">Login</a></li>
                     <li {{context.ishidden}}><a href="/signup">Sign Up</a></li>
                     <li><a href="/contact">Contact</a></li>
-                    <li {{context.isnothidden}}><a href="/profile">Profile</a></li>
                     <li {{context.isnothidden}}><a href="/signout">Signout</a></li>
                     <li {{context.isnothidden}} id="cart-btn"><a href="/cart"><i class="fa fa-shopping-cart"></i></a></li>
                 </ul>
+                
                 <div class="search">
                     <span class="icon">
                         <ion-icon name="search-outline" class="searchBtn"></ion-icon>
                         <ion-icon name="close-outline" class="closeBtn"></ion-icon>
                     </span>
+                </div>
+                <div {{context.isnothidden}} class="profile">
+                    <img class="profile-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile Image" width="30px" height="30px">
                 </div>
             </div>
             <div class="searchBox">
@@ -40,12 +43,41 @@
                 </form>
             </div>
         </header>
+        <div class="profile-dropdown">
+            <ul class="profile-list">
+                <div class="item-list">
+                    <li class="profile-list-heading"> {{ context.name }}</li>
+                </div>
+                <div class="item-list">
+                    <li class="profile-list-item"><a href="/profile/">View Profile</a></li>
+                </div>
+                <div class="item-list">
+                    <li class="profile-list-item"><a href="/profile/listings/">Manage Listings</a></li>
+                </div>
+                <div class="item-list">
+                    <li class="profile-list-item"><a href="/cart/">View Cart</a></li>
+                </div>
+            </ul>
+        </div>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
             let searchBtn = document.querySelector('.searchBtn');
             let closeBtn = document.querySelector('.closeBtn');
             let searchBox = document.querySelector('.searchBox');
+            let profileBtn = document.querySelector('.profile-img');
+            let profileBox = document.querySelector('.profile-dropdown');
+            isOpen = false;
+            
+            profileBtn.onclick = function(){
+                if (isOpen){
+                    profileBox.classList.remove('active');
+                    isOpen = false;
+                } else {
+                    profileBox.classList.add('active');
+                    isOpen = true;
+                }
+            }
 
             searchBtn.onclick = function(){
                 searchBox.classList.add('active');

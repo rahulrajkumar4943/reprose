@@ -10,8 +10,16 @@ html {
     font-size: 62.5%;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 header {
     font-size: 160%;
+}
+
+.profile-dropdown {
+    font-size: 150%;
 }
 
 body {
@@ -21,7 +29,8 @@ body {
     align-items: center;
     min-height: 100vh;
     padding-right: 62px;
-    background: #ffffff;
+    background: #9ecec3;
+    /* background: #ededed; */
 }
 
 .grid {
@@ -49,6 +58,10 @@ body {
     box-shadow: 0 4rem 8rem rgba(0, 0, 0, 0.5);
 }
 
+.card {
+    height: 100%;
+}
+
 .card-img {
     display: block;
     width: 100%;
@@ -57,14 +70,16 @@ body {
 }
 
 .card-content {
+    position: relative;
     padding: 3rem;
+    height: 60%;
 }
 
 .card-header {
     font-size: 3rem;
     font-weight: 500;
     color: #0d0d0d;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     max-height: 90px;
     inline-size: 100%;
     overflow-wrap: break-word;
@@ -74,9 +89,14 @@ body {
 .card-text {
     font-size: 1.6rem;
     letter-spacing: 0.1rem;
-    line-height: 1.7;
+    line-height: 1.0;
     color: #3d3d3d;
-    margin-bottom: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.buttonform {
+    position: absolute;
+    bottom: 10%;
 }
 
 .card-btn {
@@ -176,7 +196,7 @@ p {
 .filter-box {
     padding: 3%;
     position: absolute;
-    top: 22%;
+    bottom: -100%;
     left: 15%;
     display: flex;
     width: 70%;
@@ -187,11 +207,14 @@ p {
     overflow-y: scroll;
     border: 2px solid #3c3c3c;
     box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.3);
+    transition: 0.5s ease-in-out;
     visibility: hidden;
 }
 
 .filter-box.active {
     visibility: visible;
+    bottom: 10%;
+
 }
 
 .filter-item {
@@ -319,3 +342,4 @@ p {
 body.inactive {
     overflow: hidden;
 }
+

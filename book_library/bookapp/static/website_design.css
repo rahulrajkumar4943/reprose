@@ -155,5 +155,55 @@ header .search {
 
 }
 
+.profile {
+    margin-left: 20px;
+}
+
+.profile-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 10%;
+    left: 103%;
+    z-index: 1;
+    padding: 2%;
+    background: #ffffff;
+    width: 180px;
+    font-size: 0.95rem;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    visibility: hidden;
+    transition: 0.5s ease-in-out;
+    color: black;
+}
+
+.profile-dropdown.active {
+    left: 83%;
+    visibility: visible;
+}
+
+.profile-img:hover {
+
+}
+
+.profile-list {
+    list-style-type: none;
+}
+
+.profile-list-heading {
+    border-bottom: 1px solid #3c3c3c;
+    margin-bottom: 10%;
+    padding-bottom: 7%;
+}
+
+.profile-list-item {
+    margin: 5% 0 5%;
+    font-size: 0.8rem;
+}
 /* footer */
 

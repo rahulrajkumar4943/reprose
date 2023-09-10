@@ -28,6 +28,9 @@ def homepage(request):
         listings = listings | Listings.objects.filter(id=checkid).values()
         # print(len(listings))
     if 'user_login' in request.session:
+
+        name = users.objects.get(id=request.session['user_login']).firstname
+
         context = {
             "csrf_token": csrf_token,
             "home_class": "active",
@@ -36,6 +39,7 @@ def homepage(request):
             "ishidden": "hidden",
             "isnothidden": "",
             "listings": listings,
+            "name": name,
         }
     else:
         context = {
@@ -193,6 +197,9 @@ def about(request):
     csrf_token = get_token(request)
 
     if 'user_login' in request.session:
+
+        name = users.objects.get(id=request.session['user_login']).firstname
+
         context = {
             "csrf_token": csrf_token,
             "ishidden": "hidden",
@@ -200,6 +207,7 @@ def about(request):
             "home_class": "inactive",
             "about_class": "active",
             "contact_class": "inactive",
+            "name": name,
         }
     else:
         context = {
@@ -225,6 +233,9 @@ def contact(request):
             email_address = users.objects.get(
                 id=request.session['user_login']).email_id
 
+            name = users.objects.get(
+                id=request.session['user_login']).firstname
+
             context = {
                 "csrf_token": csrf_token,
                 "ishidden": "hidden",
@@ -233,6 +244,7 @@ def contact(request):
                 "about_class": "inactive",
                 "contact_class": "active",
                 "logged_in": True,
+                "name": name,
             }
         else:
             email_address = request.POST["email"]
@@ -307,6 +319,10 @@ def contact(request):
 
     else:
         if 'user_login' in request.session:
+
+            name = users.objects.get(
+                id=request.session['user_login']).firstname
+
             context = {
                 "csrf_token": csrf_token,
                 "ishidden": "hidden",
@@ -315,6 +331,7 @@ def contact(request):
                 "about_class": "inactive",
                 "contact_class": "active",
                 "logged_in": True,
+                "name": name,
             }
         else:
             context = {
@@ -344,6 +361,10 @@ def profile(request):
         UserBio = users.objects.get(
             id=request.session['user_login'])
 
+        listings = Listings.objects.filter(userid=UserBio.id).values()
+
+        listings = list(listings)
+
         context = {
             "ishidden": "hidden",
             "isnothidden": "",
@@ -352,10 +373,41 @@ def profile(request):
             "contact_class": "inactive",
             "name": UserBio.firstname + " " + UserBio.lastname,
             "email": UserBio.email_id,
+            "listings": listings,
+            "num_listings": len(listings)
         }
         renderdata = {}
         renderdata['context'] = context
         template = loader.get_template('profile.html')
+        return HttpResponse(template.render(renderdata, request))
+    else:
+        return redirect('login')
+
+
+def profile_listings(request):
+    if 'user_login' in request.session:
+        print("listings profile")
+        UserBio = users.objects.get(
+            id=request.session['user_login'])
+
+        listings = Listings.objects.filter(userid=UserBio.id).values()
+
+        listings = list(listings)
+
+        context = {
+            "ishidden": "hidden",
+            "isnothidden": "",
+            "home_class": "inactive",
+            "about_class": "inactive",
+            "contact_class": "inactive",
+            "name": UserBio.firstname + " " + UserBio.lastname,
+            "email": UserBio.email_id,
+            "listings": listings,
+            "num_listings": len(listings)
+        }
+        renderdata = {}
+        renderdata['context'] = context
+        template = loader.get_template('profile_listings.html')
         return HttpResponse(template.render(renderdata, request))
     else:
         return redirect('login')
@@ -367,7 +419,7 @@ def browse_listings(request):
     if request.method == "POST":
         if request.POST.get('filter_search'):
             print("filter")
-            query = ""
+            query = "found"
             if request.POST.get('minprice'):
                 min_price = request.POST.get('minprice')
             else:
@@ -390,18 +442,19 @@ def browse_listings(request):
             if request.POST.get('age_group'):
                 age_group = request.POST.get('age_group')
             else:
-                age_group = ""
+                age_group = "1"
             if request.POST.get('saleLend'):
                 saleLend = request.POST.get('saleLend')
             else:
-                saleLend = ""
+                saleLend = "ing"
             listings = Listings.objects.filter(
-                price__range=(min_price, max_price), condition__icontains=condition, saleOrBorrow=saleLend)
+                price__range=(min_price, max_price), condition__icontains=condition, saleOrBorrow__icontains=saleLend, age_group__icontains=age_group)
         else:
             print("no-filter")
             query = request.POST.get("query")
             listings = Listings.objects.filter(
                 book_title__icontains=query) | Listings.objects.filter(description__icontains=query)
+            query = "for " + request.POST.get("query")
         numberOfResults = listings.count()
         if listings:
             noResults = "hidden"
@@ -412,6 +465,10 @@ def browse_listings(request):
         else:
             s = "s"
         if 'user_login' in request.session:
+
+            name = users.objects.get(
+                id=request.session['user_login']).firstname
+
             context = {
                 "csrf_token": csrf_token,
                 "ishidden": "hidden",
@@ -425,6 +482,7 @@ def browse_listings(request):
                 "noResults": noResults,
                 "numberOfResults": numberOfResults,
                 "s": s,
+                "name": name,
             }
         else:
             context = {
@@ -446,6 +504,10 @@ def browse_listings(request):
         numberOfResults = 0
         s = ""
         if 'user_login' in request.session:
+
+            name = users.objects.get(
+                id=request.session['user_login']).firstname
+
             context = {
                 "csrf_token": csrf_token,
                 "ishidden": "hidden",
@@ -459,6 +521,7 @@ def browse_listings(request):
                 "noResults": noResults,
                 "numberOfResults": numberOfResults,
                 "s": s,
+                "name": name,
             }
         else:
             context = {
@@ -488,6 +551,9 @@ def browse_listings(request):
 def add_listing(request):
     csrf_token = get_token(request)
     if 'user_login' in request.session:
+
+        name = users.objects.get(id=request.session['user_login']).firstname
+
         context = {
             "ishidden": "hidden",
             "isnothidden": "",
@@ -495,6 +561,7 @@ def add_listing(request):
             "about_class": "inactive",
             "contact_class": "inactive",
             "csrf_token": csrf_token,
+            "name": name,
         }
         if request.method == "POST":
 
@@ -512,9 +579,15 @@ def add_listing(request):
             saleOrBorrow = request.POST["listingType"]
             price = request.POST["price"]
             condition = request.POST['condition']
-            data = Listings(userid=request.session['user_login'], book_title=book_title, isbn=isbn,
-                            genre=genre, age_group=age, saleOrBorrow=saleOrBorrow, price=price, imgurl=imgurl, description=description, condition=condition, times_viewed=0, borrowed_date=0)
-            data.save()
+            try:
+                data = Listings(userid=request.session['user_login'], book_title=book_title, isbn=isbn,
+                                genre=genre, age_group=age, saleOrBorrow=saleOrBorrow, price=price, imgurl=imgurl, description=description, condition=condition, times_viewed=0, borrowed_date=0)
+                data.save()
+            except ValueError:
+                price = 0
+                data = Listings(userid=request.session['user_login'], book_title=book_title, isbn=isbn,
+                                genre=genre, age_group=age, saleOrBorrow=saleOrBorrow, price=price, imgurl=imgurl, description=description, condition=condition, times_viewed=0, borrowed_date=0)
+                data.save()
             return redirect('search')
         else:
             renderdata = {}
@@ -523,6 +596,13 @@ def add_listing(request):
             return HttpResponse(template.render(renderdata, request))
     else:
         return redirect('login')
+
+
+def remove_listing(request):
+    bookid = request.POST['remove_listing']
+    listings = Listings.objects.get(id=bookid)
+    listings.delete()
+    return redirect('profile_listings')
 
 
 def signout(request):
@@ -676,13 +756,35 @@ def bookinfo(request, id):
         del request.session['may_add_to_cart']
     bookdata = Listings.objects.filter(id=id).values()
     # print(type(bookdata))
-    context = {
-        'id': id,
-        'bookdata': bookdata.values()[0],
+    if 'user_login' in request.session:
+
+        name = users.objects.get(id=request.session['user_login']).firstname
+
+        context = {
+            "ishidden": "hidden",
+            "isnothidden": "",
+            "home_class": "inactive",
+            "about_class": "inactive",
+            "contact_class": "active",
+            'id': id,
+            "name": name,
+        }
+    else:
+        context = {
+            "ishidden": "",
+            "isnothidden": "hidden",
+            "home_class": "inactive",
+            "about_class": "inactive",
+            "contact_class": "active",
+            'id': id,
+        }
+    renderdata = {
+        "context": context,
+        "bookdata": bookdata.values()[0],
     }
     request.session['may_add_to_cart'] = id
     template = loader.get_template('bookinfo.html')
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render(renderdata, request))
     return HttpResponse('<p>The id is {}</p>'.format(id))
 
 
@@ -790,7 +892,7 @@ def cart(request):
                     "isnothidden": "",
                     "error_message": "",
                 }
-                print("dleteing bookid:", current_cart[keys_with_value[0]])
+                print("deleting bookid:", current_cart[keys_with_value[0]])
                 del current_cart[keys_with_value[0]]
                 data = users.objects.get(id=request.session['user_login'])
                 data.cart = json.dumps(current_cart)
@@ -826,11 +928,59 @@ def checkout(request, userid):
     if 'user_login' in request.session:
         if request.session['user_login'] == userid:
             userdata = users.objects.get(id=userid)
+            users_cart = json.loads(userdata.cart)
+            book_ids = list(users_cart.values())
+            listings = Listings.objects.filter(id__in=book_ids)
+            total_price = 0
+            for book in listings:
+                total_price = total_price + book.price
+            if total_price >= 50:
+                shipping = 0
+            else:
+                shipping = 5
+            tax = 0.08*total_price
+
             context = {
-                "userdata": userdata
+                "userdata": userdata,
+                "listings": listings,
+                "total_price": total_price,
+                "tax": tax,
+                "shipping": shipping,
+                "total": total_price + shipping + tax,
+                "userid": request.session['user_login'],
             }
             template = loader.get_template("checkout.html")
-            return HttpResponse(template.render())
+            return HttpResponse(template.render(context, request))
+        else:
+            return redirect('cart')
+    else:
+        return redirect('login')
+
+
+def payment(request, userid):
+    if 'user_login' in request.session:
+        if request.session['user_login'] == userid:
+            userdata = users.objects.get(id=userid)
+            userdata = users.objects.get(id=userid)
+            users_cart = json.loads(userdata.cart)
+            book_ids = list(users_cart.values())
+            listings = Listings.objects.filter(id__in=book_ids)
+            total_price = 0
+            for book in listings:
+                total_price = total_price + book.price
+            if total_price >= 50:
+                shipping = 0
+            else:
+                shipping = 5
+            total_price += shipping
+            tax = 0.08*total_price
+            total_price += tax
+
+            context = {
+                "total_price": total_price,
+            }
+            template = loader.get_template("payment.html")
+            return HttpResponse(template.render(context, request))
         else:
             return redirect('cart')
     else:

@@ -1,0 +1,40 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'payment.css' %}">
+    <title>Payment Page</title>
+</head>
+<body>
+    <div class="center">
+        <h1> Make payment </h1>
+        <form method="POST" action="#" class="signupform">
+
+            <div class="txt_field">
+                <input type="text" id="card-name" name="card-name" required>
+                <span></span>
+                <label>Name on card</label>
+            </div>
+            <div class="txt_field">
+                <input type="number" id="card-number" name="card-number" minlength ="13" maxlength="16" required>
+                <span></span>
+                <label>Card number</label>
+            </div>
+            <div class="txt_field">
+                <input class = "date" type="month" id="Expiration-Date" name="Expiration-Date" required>
+                <span></span>
+                <label>Expiration Date</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" id="cvv" name="cvv" maxlength="3" required>
+                <span></span>
+                <label>CVV</label>
+            </div>
+    
+            <input type="submit" value="Pay" onclick="location.href='/'">
+
+        </form>
+    </div>
+</body>
+</html>

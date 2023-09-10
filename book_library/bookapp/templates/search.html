@@ -17,7 +17,7 @@
                 &#43 Create Listing
             </button>
             <br>
-            <p {{context.madequery}}> {{context.numberOfResults}} result{{context.s}} for "{{context.query}}"</p>
+            <p {{context.madequery}}> {{context.numberOfResults}} result{{context.s}} {{context.query}}</p>
             <br>
             <!-- Sample book db - remove later -->
 
@@ -39,16 +39,25 @@
                         <div class="card-content">
                             <h1 class="card-header"> {{book.book_title}} </h1>
                             <p class="card-text">
+                                {{book.genre}}
+                                <br>
+                                {{book.age_group}}
+                                <br>
+                                {{book.condition}}
+                                <br>
                                 {{book.saleOrBorrow}}
                                 <br>
                                 S${{book.price}}
                             </p>
-                            <form method="post" action="/cart/">
-                                {% csrf_token %}
-                                <button type="submit" id="btn" class="card-btn" name="addToCart_button" value="{{book.id}}"; event.preventDefault(); event.stopPropagation();>
-                                    Add to Cart <span>&rarr;</span>
-                                </button>
-                            </form>
+                            <div class="buttonform">
+                                <form method="post" action="/cart/">
+                                    {% csrf_token %}
+                                    <button type="submit" id="btn" class="card-btn" name="addToCart_button" value="{{book.id}}"; event.preventDefault(); event.stopPropagation();>
+                                        Add to Cart <span>&rarr;</span>
+                                    </button>
+                                </form> 
+                            </div>
+ 
                         </div>
                     </div>
                 </div>
@@ -135,8 +144,8 @@
                 <label class="heading">Sale or Borrowing</label>
                 <div class="radio">
                     <div class="radio-option">
-                        <input class="radio-input" type="radio" id="Sale" name="saleLend" value="Sale">
-                        <label class="radio-label" for="Sale">For Sale</label><br>
+                        <input class="radio-input" type="radio" id="Selling" name="saleLend" value="Selling">
+                        <label class="radio-label" for="Selling">For Sale</label><br>
                     </div>
                     <div class="radio-option">
                         <input class="radio-input" type="radio" id="Borrowing" name="saleLend" value="Borrowing">

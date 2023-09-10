@@ -1,8 +1,110 @@
+{% load static %}
 <html>
     <head>
         <title>Checkout</title>
+        <link rel="stylesheet" href="{% static 'checkout.css' %}">
     </head>
     <body>
         <h1>Checkout Page</h1>
+        <form method="post" action="#">
+            <div class="checkout-container">
+                <div class="left">
+                    {% csrf_token %}
+                    <div class="contact-form">
+                        <div class="form-header">
+                            Contact Details
+                        </div>
+                        <input type="email" class="line-field" placeholder="Enter Email Address*" value="{{userdata.email_id}}" required>
+                        <div class="line-field-multi">
+                            <input type="text" class="name-input" placeholder="First name*" value="{{userdata.firstname}}" required>
+                            <input type="text" class="name-input" placeholder="Last name*" value="{{userdata.lastname}}" required>
+                        </div>
+                    </div>
+                    <div class="address-form">
+                        <div class="form-header">
+                            Shipping Address
+                        </div>
+                        <input type="text" class="line-field" placeholder="Company">
+                        <input type="text" class="line-field" placeholder="Address line 1*" required>
+                        <input type="text" class="line-field" placeholder="Address line 2">
+                        <input type="text" class="line-field" placeholder="Address line 3">
+                        <div class="line-field-multi">
+                            <input type="text" class="name-input" placeholder="City*" required>
+                            <input type="text" class="name-input" placeholder="Zip/Postal Code*" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="order-summary">
+                        <div class="header">
+                            Order Summary
+                        </div>
+                        <div class="contents">
+                            <div class="content-line">
+                                <div class="content-left">
+                                    Subtotal
+                                </div>
+                                <div class="content-right">
+                                    S${{total_price}}
+                                </div>
+                            </div>
+                            <div class="content-line">
+                                <div class="content-left">
+                                    Shipping
+                                </div>
+                                <div class="content-right">
+                                    S${{shipping}}
+                                </div>
+                            </div>
+                            <div class="content-line">
+                                <div class="content-left">
+                                    GST
+                                </div>
+                                <div class="content-right">
+                                    S${{tax}}
+                                </div>
+                            </div>
+                            <div class="total-line">
+                                <div class="total-left">
+                                    Total
+                                </div>
+                                <div class="total-right">
+                                    S${{total}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-methods">
+                            <i class="fa-brands fa-cc-visa"></i>
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                            <i class="fa-brands fa-cc-amex"></i>
+                            <i class="fa-regular fa-credit-card"></i>
+                            <i class="fa-solid fa-money-bill"></i>
+                        </div>
+                    </div>
+                    <div class="order-cart">
+                        <div class="header">
+                            Your Basket
+                        </div>
+                        {% for book in listings %}
+                            <div class="order-item">
+                                <div class="order-left">
+                                    <img src="{{book.imgurl}}" alt="Item 1">
+                                </div>
+                                <div class="order-right">
+                                    <div class="book-title"> {{book.book_title}} </div>
+                                    <div class="book-condition">Condition:<br> {{book.condition}} </div>
+                                    <div class="book-saleBorrow"> {{book.saleOrBorrow}} </div>
+                                    <div class="book-price">Price (including gst): <br> S$ {{total}} </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <form>
+                            <button class="payment-btn" type="submit" onclick="location.href='/payment/{{userid}}'">Proceed to payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <script src="https://kit.fontawesome.com/cff990d279.js" crossorigin="anonymous"></script>
     </body>
 </html>

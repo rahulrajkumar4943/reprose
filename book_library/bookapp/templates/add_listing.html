@@ -6,6 +6,35 @@
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'addListingForm.css' %}">
+
+    <script>
+        function OpsLending() {
+            var selection = document.querySelector("#listingType");
+            console.log(selection.value);
+
+            if (selection.value == "Borrowing") {
+                var element = document.getElementById("priceLabel");
+                element.style.display = "none";
+                var element = document.getElementById("price");
+                element.removeAttribute('required');
+                var element = document.getElementById("org");
+                element.style.display = "initial";                              
+            } else if (selection.value == "Selling") {
+                var element = document.getElementById("priceLabel");
+                element.style.display = "inherit"; 
+                var element = document.getElementById("org");
+                element.style.display = "hide";
+            }
+
+        }
+
+        function OpdHide() {
+            var element = document.getElementById("org");
+            element.style.display = "none";  
+        }
+
+        window.onload = OpdHide;
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -20,18 +49,23 @@
                 <label>ISBN Number</label>
             </div>
  
-            <select class="dropdown" id="listingType" name="listingType">
+            <select class="dropdown" id="listingType" name="listingType" onchange="OpsLending()" required>
                 <option value="">Listing type</option>
-                <option id="sale" value="Sale">For Sale</option>
+                <option id="Selling" value="Selling">For Sale</option>
                 <option id="borrow" value="Borrowing">For Lending</option>
             </select>
 
             <div class="txt_field" id="priceLabel">
-                <input type="number" name="price" required>
+                <input type="number" id="price" name="price" min="0" required>
                 <span></span>
                 <label>Price</label>
             </div>
-            <select class="dropdown" id="condition" name="condition">
+
+            <div id="org">
+                <br>  <br>
+            </div>
+
+            <select class="dropdown" id="condition" name="condition" required>
                 <option value="">Condition</option>
                 <option value="Brand_New">Brand New</option>
                 <option value="Like_new">Used - Like New</option>
